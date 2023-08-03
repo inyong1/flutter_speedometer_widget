@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _MyHomeState extends State<MyHome> {
                 _progress = v;
               }),
             ),
-            SpeedoMeterWidget(value: _progress, width: 150, height: 150),
+            SpeedoMeterWidget(value: _progress, width: 250, height: 250),
           ],
         ),
       ),
@@ -52,7 +53,10 @@ class SpeedoMeterWidget extends StatelessWidget {
   final double value, width, height;
 
   const SpeedoMeterWidget(
-      {super.key, required this.value, required this.width, required this.height});
+      {super.key,
+      required this.value,
+      required this.width,
+      required this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -79,16 +83,52 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromLTRB(0, 0, size.width, size.height);
+
+    /// TRACK
     final trackPaint = Paint()
       ..color = Colors.green
       ..style = PaintingStyle.stroke
       ..strokeWidth = 25;
-    canvas.drawArc(rect, pi - 0.5, 0.5 + pi + 0.5, false, trackPaint);
+    canvas.drawArc(rect, pi, pi, false, trackPaint);
+
+    /// LINE 1
+    final linePaint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    for (double i = 0; i <= 1; i += 0.1) {
+      canvas.save();
+      canvas.translate(size.width / 2, size.height / 2);
+      canvas.rotate(i * pi);
+      canvas.translate(size.width / -2, size.height / -2);
+      final lineStart = Offset(-15, size.height / 2);
+      canvas.drawLine(lineStart, Offset(20, lineStart.dy), linePaint);
+      canvas.restore();
+    }
+
+    /// LINE 1
+    final linePaint2 = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    for (double i = 0; i <= 1; i += 0.02) {
+      canvas.save();
+      canvas.translate(size.width / 2, size.height / 2);
+      canvas.rotate(i * pi);
+      canvas.translate(size.width / -2, size.height / -2);
+      final lineStart = Offset(-10, size.height / 2);
+      canvas.drawLine(lineStart, Offset(10, lineStart.dy), linePaint2);
+      canvas.restore();
+    }
+
+    /// VALUE
     final valuePaint = Paint()
-      ..color = Colors.yellow
+      ..color = Colors.yellow.withAlpha(150)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 15;
-    canvas.drawArc(rect, pi - 0.5, value * (0.5 + pi + 0.5), false, valuePaint);
+    canvas.drawArc(rect, pi, value * pi, false, valuePaint);
   }
 
   @override
